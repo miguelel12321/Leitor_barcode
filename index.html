@@ -4,59 +4,36 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <style>
-        body{
-            background-image: url(img/logo.png);
-            background-size: 50%;
-            background-position:top;
-            background-repeat: no-repeat;
-        }
-
-        div{
-            font-family: Arial, Helvetica, sans-serif;
-            font-size: 15pt;
-            text-align: center;
-            margin-top: 200px;
-            display: block;
-        }
-        input.button{
-            font-family: Arial, Helvetica, sans-serif;
-            font-size: 8pt;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-            background-color: pink;
-            border-radius: 20px;
-            border: black solid 1.5px;
-            height: 30px;
-            width: 80px;
-            transition: 0.4s;
-        }
-        input.button:hover{
-            background-color: rgb(194, 113, 126);
-        }
-    </style>
+    <title>Leitor de códigos de barras</title>
 </head>
 <body>
-    <div>
-        <label style="margin-bottom: 5px;" for="pass">Insira a password:</label> 
-        <input style="font-size: 15pt; transition: 0.3s;" type="password" name="pass" id="pass"> <br>
-        <br> <br> <br>
-        <input type="button" class="button" value="Login" onclick="login()">
-    </div>
+    <h1>Aponte a câmara para um código de barras.</h1>
+    <div id="leitor"></div>
+    <p id="resultado"></p>
 
+    <script src="quagga.js"></script>
     <script>
-        var password = "Sandra02"
-        var input = document.getElementById('pass')
-
-        function login() {
-            if (input.value == password) {
-                window.location.replace("index.html")
-            } else {
-                input.style.border = "solid red 3px"
-            }
+    Quagga.init({
+        inputStream : {
+          name : "Live",
+          type : "LiveStream",
+          target: document.querySelector('#leitor')    // Or '#yourElement' (optional)
+        },
+        decoder : {
+          readers : ["code_128_reader"]
         }
-    </script>
+      }, function(err) {
+          if (err) {
+              console.log(err);
+              return
+          }
+          console.log("Initialization finished. Ready to start");
+          Quagga.start();
+      });
+      Quagga.onDetected(function (data){
+        document.getElementById('resultado').innerHTML = data.codeResult.code
+      })
+
+      </script>
 </body>
 </html>
